@@ -23,6 +23,7 @@ class App extends Component {
       prevState.page !== this.state.page
     ) {
       try {
+        this.setState({ isLoading: true });
         const data = await getImages(this.state.searchQuery, this.state.page);
         console.log(data);
 
@@ -38,6 +39,8 @@ class App extends Component {
       } catch (error) {
         console.log(error);
         this.setState({ error: error.message });
+      } finally {
+        this.setState({ isLoading: false });
       }
     }
   }
@@ -71,6 +74,7 @@ class App extends Component {
       <div className={css.app}>
         <Searchbar onSubmit={this.onSubmitForm} />
         <ImageGallery images={this.state.images} />
+        {this.state.isLoading && <Loader />}
         {this.state.showLoadMoreBtn && <Button onClick={this.loadMore} />}
         {this.state.isEmpty && (
           <p>
@@ -78,7 +82,6 @@ class App extends Component {
             again.
           </p>
         )}
-        <Loader />
       </div>
     );
   }
