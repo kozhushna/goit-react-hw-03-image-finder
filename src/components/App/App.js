@@ -5,7 +5,10 @@ import Button from 'components/Button';
 import getImages from '../../services/pixabay-api';
 import Loader from 'components/Loader';
 import { ToastContainer, toast } from 'react-toastify';
+
 import css from './App.module.css';
+
+const PAGE_SIZE = 12;
 
 class App extends Component {
   state = {
@@ -17,13 +20,11 @@ class App extends Component {
   };
 
   async componentDidUpdate(prevProps, prevState) {
-    if (
-      prevState.searchQuery !== this.state.searchQuery ||
-      prevState.page !== this.state.page
-    ) {
+    const { searchQuery, page } = this.state;
+    if (prevState.searchQuery !== searchQuery || prevState.page !== page) {
       try {
         this.setState({ isLoading: true });
-        const data = await getImages(this.state.searchQuery, this.state.page);
+        const data = await getImages(searchQuery, page, PAGE_SIZE);
 
         if (!data.images.length) {
           toast.info(
@@ -34,7 +35,7 @@ class App extends Component {
 
         this.setState(prevState => ({
           images: [...prevState.images, ...data.images],
-          showLoadMoreBtn: this.state.page < Math.ceil(data.total / 12),
+          showLoadMoreBtn: page < Math.ceil(data.total / PAGE_SIZE),
         }));
       } catch (error) {
         toast.error(error.message);
@@ -44,7 +45,7 @@ class App extends Component {
     }
   }
 
-  loadMore = e => {
+  loadMore = () => {
     this.setState(prevState => ({ page: prevState.page + 1 }));
   };
 
@@ -59,13 +60,14 @@ class App extends Component {
   };
 
   render() {
+    const { images, isLoading, showLoadMoreBtn } = this.state;
     return (
       <div className={css.app}>
         <ToastContainer autoClose={2500} />
         <Searchbar onSubmit={this.onSubmitForm} />
-        <ImageGallery images={this.state.images} />
-        {this.state.isLoading && <Loader />}
-        {this.state.showLoadMoreBtn && <Button onClick={this.loadMore} />}
+        <ImageGallery images={images} />
+        {isLoading && <Loader />}
+        {showLoadMoreBtn && <Button onClick={this.loadMore} />}
       </div>
     );
   }

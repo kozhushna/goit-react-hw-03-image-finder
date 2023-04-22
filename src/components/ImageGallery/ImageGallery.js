@@ -1,7 +1,8 @@
 import { Component } from 'react';
-import css from './ImageGallery.module.css';
 import { ImageGalleryItem } from 'components/ImageGalleryItem';
 import Modal from 'components/Modal';
+
+import css from './ImageGallery.module.css';
 
 class ImageGallery extends Component {
   state = {
@@ -12,7 +13,6 @@ class ImageGallery extends Component {
 
   showModal = (src, alt) => {
     this.setState({ src, alt, showModal: true });
-    console.log({ src, alt });
   };
 
   closeModal = () => {
