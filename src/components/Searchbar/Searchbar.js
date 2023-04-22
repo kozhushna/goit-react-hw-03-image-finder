@@ -1,8 +1,9 @@
-import { Component } from 'react';
+import { React, Component } from 'react';
 import { FcSearch } from 'react-icons/fc';
 import css from './Searchbar.module.css';
 
-// import { toast } from 'react-toastify';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default class Searchbar extends Component {
   state = {
@@ -15,8 +16,12 @@ export default class Searchbar extends Component {
 
   handleSubmit = event => {
     event.preventDefault();
-
-    this.props.onSubmit(this.state.searchQuery);
+    const query = this.state.searchQuery.trim();
+    if (query === '') {
+      toast.warn('Please input text for serch.');
+      return;
+    }
+    this.props.onSubmit(query);
     this.setState({ searchQuery: '' });
   };
 
