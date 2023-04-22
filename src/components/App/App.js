@@ -1,31 +1,64 @@
 import { Component } from 'react';
-import fetchImages from '../../services/pixabay-api';
-import Searchbar from './Searchbar/Searchbar';
+import Searchbar from 'components/Searchbar';
+import ImageGallery from 'components/ImageGallery';
+import Button from 'components/Button';
+import getImages from '../../services/pixabay-api';
+import css from './App.module.css';
 
 class App extends Component {
   state = {
-    images: [
-      // { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
-      // { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
-      // { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
-      // { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
-    ],
-    filter: '',
+    searchQuery: '',
+    page: 1,
+    images: [],
+    showLoadMoreBtn: false,
+    isLoading: false,
+    isEmpty: false,
+    error: '',
   };
-  async componentDidMount() {
-    const images = await fetchImages('cat', 1);
-    this.setState(images);
-    console.log(images);
+
+  async componentDidUpdate(prevProps, prevState) {
+    if (
+      prevState.searchQuery !== this.state.searchQuery ||
+      prevState.page !== this.state.page
+    ) {
+      try {
+        const data = await getImages(this.state.searchQuery, this.state.page);
+        console.log(data);
+
+        this.setState(prevState => ({
+          images: [...prevState.images, ...data.images],
+          showLoadMoreBtn: this.state.page < Math.ceil(data.total / 12),
+        }));
+      } catch (error) {
+        console.log(error);
+        this.setState({ error: error.message });
+      }
+    }
   }
 
-  onSubmit(searchQuery) {
-    console.log(searchQuery);
-  }
+  loadMore = e => {
+    this.setState(prevState => ({ page: prevState.page + 1 }));
+  };
+  //  async componentDidUpdate(prevProps, prevState) {
+  //     if (
+  //       prevState.searchQuery !== this.state.searchQuery ||
+  //       prevState.page !== this.state.page
+  //     ) {
+  //       this.setState({ isLoading: true,  });
+
+  //     }
+  //   }
+
+  onSubmitForm = searchQuery => {
+    this.setState({ searchQuery: searchQuery });
+  };
 
   render() {
     return (
-      <div className="container">
-        <Searchbar onSubmit={this.onSubmit} />
+      <div className={css.app}>
+        <Searchbar onSubmit={this.onSubmitForm} />
+        <ImageGallery images={this.state.images} />
+        {this.state.showLoadMoreBtn && <Button onClick={this.loadMore} />}
       </div>
     );
   }

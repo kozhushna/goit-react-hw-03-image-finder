@@ -4,8 +4,8 @@ const BASE_URL = 'https://pixabay.com/api';
 const API_KEY = '34313610-1e4a8498015aaf70caf78cfd3';
 const PAGE_SIZE = 12;
 
-async function fetchImages(searchQuery, page) {
-  const result = await axios.get(BASE_URL, {
+async function getImages(searchQuery, page) {
+  const { data } = await axios.get(BASE_URL, {
     params: {
       q: searchQuery,
       page: page,
@@ -15,23 +15,25 @@ async function fetchImages(searchQuery, page) {
       per_page: PAGE_SIZE,
     },
   });
-  console.log(result);
 
-  if (result.data.totalHits === 0) {
-    throw new Error(
-      'Sorry, there are no images matching your search query. Please try again.'
-    );
-  }
+  // if (data.totalHits === 0) {
+  //   throw new Error(
+  //     'Sorry, there are no images matching your search query. Please try again.'
+  //   );
+  // }
 
-  return result.data.hits.map(({ id, webformatURL, largeImageURL, tags }) => ({
-    id,
-    webformatURL,
-    largeImageURL,
-    tags,
-  }));
+  return {
+    total: data.totalHits,
+    images: data.hits.map(({ id, webformatURL, largeImageURL, tags }) => ({
+      id,
+      webformatURL,
+      largeImageURL,
+      tags,
+    })),
+  };
 }
 
-export default fetchImages;
+export default getImages;
 
 // export default class ImagesApiService {
 //   constructor() {

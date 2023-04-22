@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import { ImSearch } from 'react-icons/im';
+import { FcSearch } from 'react-icons/fc';
 import css from './Searchbar.module.css';
 
 // import { toast } from 'react-toastify';
@@ -17,7 +17,7 @@ export default class Searchbar extends Component {
     event.preventDefault();
 
     this.props.onSubmit(this.state.searchQuery);
-    this.setState({ searchQuery: '' });
+    // this.setState({ searchQuery: '' });
   };
 
   render() {
@@ -25,7 +25,8 @@ export default class Searchbar extends Component {
       <header className={css.searchbar}>
         <form className={css.form} onSubmit={this.handleSubmit}>
           <button type="submit" className={css.button}>
-            <ImSearch />
+            {/* <ImSearch /> */}
+            <FcSearch size="2em" />
           </button>
 
           <input
