@@ -3,6 +3,7 @@ import Searchbar from 'components/Searchbar';
 import ImageGallery from 'components/ImageGallery';
 import Button from 'components/Button';
 import getImages from '../../services/pixabay-api';
+import Loader from 'components/Loader';
 import css from './App.module.css';
 
 class App extends Component {
@@ -24,6 +25,11 @@ class App extends Component {
       try {
         const data = await getImages(this.state.searchQuery, this.state.page);
         console.log(data);
+
+        if (!data.images.length) {
+          this.setState({ isEmpty: true });
+          return;
+        }
 
         this.setState(prevState => ({
           images: [...prevState.images, ...data.images],
@@ -50,7 +56,14 @@ class App extends Component {
   //   }
 
   onSubmitForm = searchQuery => {
-    this.setState({ searchQuery: searchQuery });
+    this.setState({
+      searchQuery,
+      images: [],
+      page: 1,
+      isEmpty: false,
+      error: '',
+      showLoadMoreBtn: false,
+    });
   };
 
   render() {
@@ -59,6 +72,13 @@ class App extends Component {
         <Searchbar onSubmit={this.onSubmitForm} />
         <ImageGallery images={this.state.images} />
         {this.state.showLoadMoreBtn && <Button onClick={this.loadMore} />}
+        {this.state.isEmpty && (
+          <p>
+            Sorry, there are no images matching your search query. Please try
+            again.
+          </p>
+        )}
+        <Loader />
       </div>
     );
   }

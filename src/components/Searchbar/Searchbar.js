@@ -17,7 +17,7 @@ export default class Searchbar extends Component {
     event.preventDefault();
 
     this.props.onSubmit(this.state.searchQuery);
-    // this.setState({ searchQuery: '' });
+    this.setState({ searchQuery: '' });
   };
 
   render() {
@@ -25,7 +25,6 @@ export default class Searchbar extends Component {
       <header className={css.searchbar}>
         <form className={css.form} onSubmit={this.handleSubmit}>
           <button type="submit" className={css.button}>
-            {/* <ImSearch /> */}
             <FcSearch size="2em" />
           </button>
 
@@ -35,6 +34,7 @@ export default class Searchbar extends Component {
             autoComplete="off"
             autoFocus
             placeholder="Search images and photos"
+            required
             value={this.state.searchQuery}
             onChange={this.handleSearchQueryChange}
           />
